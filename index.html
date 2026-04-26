@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoReseñas PRO | Respuestas Inteligentes con IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    </style>
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen font-sans">
+
+    <nav class="bg-white shadow-sm py-4 px-8 flex justify-between items-center border-b border-gray-100">
+        <div class="text-2xl font-extrabold text-indigo-600 tracking-tight">AutoReseñas<span class="text-gray-400">.io</span></div>
+        <div class="flex items-center gap-4">
+            <span id="creditsLabel" class="text-sm font-medium bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full border border-indigo-100">Créditos gratis: 3</span>
+            <a href="#precios" class="bg-indigo-600 text-white px-5 py-2 rounded-full text-sm font-bold hover:bg-indigo-700 transition shadow-md">Hazte PRO</a>
+        </div>
+    </nav>
+
+    <header class="gradient-bg text-white py-16 px-6 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">No pierdas más clientes por no responder</h1>
+        <p class="text-lg opacity-90 max-w-2xl mx-auto text-indigo-100">La IA diseñada para que restaurantes y negocios locales respondan reseñas de Google Maps en 2 segundos.</p>
+    </header>
+
+    <main class="max-w-4xl mx-auto -mt-10 p-4 w-full">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+            <div class="p-8">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider">Pega la reseña aquí</label>
+                        <textarea id="reviewText" rows="6" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition resize-none" placeholder="Ej: El servicio fue lento pero la comida excelente..."></textarea>
+                        
+                        <label class="block text-sm font-bold text-gray-700 uppercase tracking-wider">Personalidad de tu negocio</label>
+                        <select id="toneSelect" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/20 outline-none appearance-none">
+                            <option value="luxury">Elegante y Gourmet</option>
+                            <option value="friendly">Cercano y Amigable</option>
+                            <option value="apologetic">Resolutivo (Para quejas)</option>
+                        </select>
+
+                        <button onclick="generateWithAI()" id="btnGenerate" class="w-full gradient-bg text-white font-bold py-5 rounded-2xl hover:opacity-90 transition shadow-xl text-lg flex items-center justify-center gap-2">
+                            Generar Respuesta Mágica ✨
+                        </button>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-2xl p-6 border border-dashed border-gray-300 flex flex-col justify-center relative">
+                        <div id="placeholder" class="text-center text-gray-400">
+                            <p>Tu respuesta aparecerá aquí...</p>
+                        </div>
+                        <div id="resultBox" class="hidden h-full flex flex-col">
+                            <h3 class="text-xs font-bold text-indigo-500 uppercase mb-2">Respuesta Sugerida:</h3>
+                            <p id="responseText" class="text-gray-800 leading-relaxed italic text-lg"></p>
+                            <button onclick="copyText()" class="mt-auto w-full bg-white border border-gray-200 text-gray-600 py-2 rounded-xl hover:bg-gray-100 transition text-sm font-bold">
+                                📋 Copiar para Google Maps
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section id="precios" class="max-w-4xl mx-auto py-20 px-6">
+        <h2 class="text-3xl font-bold text-center mb-12">Planes para negocios serios</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm text-center">
+                <h3 class="text-xl font-bold mb-2">Plan Básico</h3>
+                <p class="text-4xl font-black mb-6">Gratis</p>
+                <ul class="text-left text-gray-600 space-y-3 mb-8">
+                    <li>✅ 3 respuestas al mes</li>
+                    <li>✅ IA Estándar</li>
+                    <li>❌ Sin soporte prioritario</li>
+                </ul>
+                <button class="w-full py-3 rounded-xl border border-gray-300 font-bold text-gray-400 cursor-not-allowed">Plan Actual</button>
+            </div>
+            <div class="bg-white p-8 rounded-3xl border-2 border-indigo-500 shadow-xl text-center relative">
+                <span class="absolute -top-4 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-xs font-bold px-4 py-1 rounded-full">RECOMENDADO</span>
+                <h3 class="text-xl font-bold mb-2">Plan Ilimitado</h3>
+                <p class="text-4xl font-black mb-6">9.99€<span class="text-sm font-normal text-gray-400">/mes</span></p>
+                <ul class="text-left text-gray-600 space-y-3 mb-8">
+                    <li>✅ Respuestas ILIMITADAS</li>
+                    <li>✅ IA Premium (GPT-4)</li>
+                    <li>✅ Multidioma automático</li>
+                </ul>
+                <a href="https://buy.stripe.com/tu_enlace_aqui" class="block w-full py-3 rounded-xl gradient-bg text-white font-bold hover:opacity-90 transition shadow-lg">Suscribirme Ahora</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-white py-12 px-6 text-center">
+        <p class="opacity-50">© 2026 AutoReseñas.io - El socio tecnológico de tu negocio.</p>
+    </footer>
+
+    <script>
+        let credits = 3;
+
+        async function generateWithAI() {
+    if (credits <= 0) {
+        alert("¡Créditos agotados!");
+        return;
+    }
+
+    const review = document.getElementById('reviewText').value;
+    const tone = document.getElementById('toneSelect').value;
+    const btn = document.getElementById('btnGenerate');
+    
+    if (!review) return alert("Escribe una reseña.");
+
+    btn.innerText = "IA trabajando...";
+    btn.disabled = true;
+
+    try {
+        // Llamamos a nuestra función segura de Netlify
+        const response = await fetch('/.netlify/functions/generate-response', {
+            method: 'POST',
+            body: JSON.stringify({ review, tone })
+        });
+        
+        const data = await response.json();
+
+        document.getElementById('placeholder').classList.add('hidden');
+        document.getElementById('resultBox').classList.remove('hidden');
+        document.getElementById('responseText').innerText = data.message;
+        
+        credits--;
+        document.getElementById('creditsLabel').innerText = "Créditos gratis: " + credits;
+    } catch (error) {
+        alert("Error de conexión segura.");
+    } finally {
+        btn.innerText = "Generar Respuesta Mágica ✨";
+        btn.disabled = false;
+    }
+}
+
+        function copyText() {
+            const text = document.getElementById('responseText').innerText;
+            navigator.clipboard.writeText(text);
+            alert("¡Copiado! Pégalo en tu reseña de Google.");
+        }
+    </script>
+</body>
+</html>
