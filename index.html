@@ -83,16 +83,24 @@
                     <li>✅ IA Premium (GPT-4)</li>
                     <li>✅ Multidioma automático</li>
                 </ul>
-                <div class="mt-6 bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
-                    <p class="text-sm text-indigo-800 font-semibold mb-3">🔥 Debido a la alta demanda, estamos limitando las plazas. Déjanos tu email y te daremos acceso prioritario.</p>
-                    <form name="lista-espera" method="POST" data-netlify="true" class="flex flex-col gap-2">
-                        <input type="email" name="email" placeholder="email@tunegocio.com" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-700">
+                
+                <div id="cajaFormulario" class="mt-6 bg-indigo-50 p-6 rounded-3xl border border-indigo-100">
+                    <p class="text-sm text-indigo-800 font-semibold mb-4 text-left">🔥 Debido a la alta demanda, estamos limitando las plazas. Déjanos tu email y te daremos acceso prioritario.</p>
+                    <form id="formListaEspera" name="lista-espera" method="POST" data-netlify="true" class="flex flex-col gap-3">
+                        <input type="hidden" name="form-name" value="lista-espera" />
+                        <input type="email" name="email" placeholder="tu@email.com" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-indigo-500 outline-none text-gray-700">
                         <button type="submit" class="w-full py-3 rounded-xl gradient-bg text-white font-bold hover:opacity-90 transition shadow-lg">
                             Avisadme cuando haya hueco
                         </button>
                     </form>
                 </div>
-            </div>
+
+                <div id="mensajeExito" class="hidden mt-6 bg-green-50 p-6 rounded-3xl border border-green-200 text-center">
+                    <div class="text-3xl mb-2">✅</div>
+                    <p class="text-green-800 font-bold text-lg">¡Estás en la lista!</p>
+                    <p class="text-sm text-green-600 mt-1">Tu plaza está reservada. Te avisaremos pronto.</p>
+                </div>
+                </div>
         </div>
     </section>
 
@@ -103,49 +111,75 @@
     <script>
         let credits = 3;
 
+        // Función para generar reseñas conectando con tu backend seguro
         async function generateWithAI() {
-    if (credits <= 0) {
-        alert("¡Créditos agotados!");
-        return;
-    }
+            if (credits <= 0) {
+                alert("¡Créditos agotados! Únete a la lista de espera abajo.");
+                window.location.hash = "precios";
+                return;
+            }
 
-    const review = document.getElementById('reviewText').value;
-    const tone = document.getElementById('toneSelect').value;
-    const btn = document.getElementById('btnGenerate');
-    
-    if (!review) return alert("Escribe una reseña.");
+            const review = document.getElementById('reviewText').value;
+            const tone = document.getElementById('toneSelect').value;
+            const btn = document.getElementById('btnGenerate');
+            
+            if (!review) return alert("Escribe una reseña.");
 
-    btn.innerText = "IA trabajando...";
-    btn.disabled = true;
+            btn.innerText = "IA trabajando...";
+            btn.disabled = true;
 
-    try {
-        // Llamamos a nuestra función segura de Netlify
-        const response = await fetch('/.netlify/functions/generate-response', {
-            method: 'POST',
-            body: JSON.stringify({ review, tone })
-        });
-        
-        const data = await response.json();
+            try {
+                // Llamamos a tu túnel seguro de Netlify
+                const response = await fetch('/.netlify/functions/generate-response', {
+                    method: 'POST',
+                    body: JSON.stringify({ review, tone })
+                });
+                
+                const data = await response.json();
 
-        document.getElementById('placeholder').classList.add('hidden');
-        document.getElementById('resultBox').classList.remove('hidden');
-        document.getElementById('responseText').innerText = data.message;
-        
-        credits--;
-        document.getElementById('creditsLabel').innerText = "Créditos gratis: " + credits;
-    } catch (error) {
-        alert("Error de conexión segura.");
-    } finally {
-        btn.innerText = "Generar Respuesta Mágica ✨";
-        btn.disabled = false;
-    }
-}
+                if (!response.ok) throw new Error(data.error);
+
+                document.getElementById('placeholder').classList.add('hidden');
+                document.getElementById('resultBox').classList.remove('hidden');
+                document.getElementById('responseText').innerText = data.message;
+                
+                credits--;
+                document.getElementById('creditsLabel').innerText = "Créditos gratis: " + credits;
+            } catch (error) {
+                alert("Error de conexión con la IA. Asegúrate de que tu backend está funcionando.");
+                console.error(error);
+            } finally {
+                btn.innerText = "Generar Respuesta Mágica ✨";
+                btn.disabled = false;
+            }
+        }
 
         function copyText() {
             const text = document.getElementById('responseText').innerText;
             navigator.clipboard.writeText(text);
             alert("¡Copiado! Pégalo en tu reseña de Google.");
         }
+
+        // Script para enviar el formulario sin recargar la página
+        document.getElementById("formListaEspera").addEventListener("submit", function(event) {
+            event.preventDefault(); 
+            
+            const miFormulario = event.target;
+            const datosFormulario = new FormData(miFormulario);
+
+            fetch("/", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams(datosFormulario).toString()
+            })
+            .then(() => {
+                document.getElementById("cajaFormulario").classList.add("hidden");
+                document.getElementById("mensajeExito").classList.remove("hidden");
+            })
+            .catch((error) => {
+                alert("Hubo un error de conexión al apuntarte. Inténtalo de nuevo.");
+            });
+        });
     </script>
 </body>
 </html>
